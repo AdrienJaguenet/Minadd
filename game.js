@@ -6,23 +6,45 @@ var gems_bell;
 
 var particles = [];
 
-function Particle(name, text)
+function Particle(name, text, type)
 {
 	this.max_lifetime = 1;
 	this.lifetime = 1;
 	this.name = name;
 	this.text = text;
+	this.type = type;
+	if (type == "bubbling") {
+		this.velocity = {x : 0, y : -3};
+	} else {
+		var angle = Math.random() * Math.PI - (Math.PI / 2);
+		this.velocity = {
+			x : Math.sin(angle) * 5,
+			y : Math.cos(angle) * 2
+		}
+	}
 
 	this.dom_elm = document.createElement("div");
 	this.dom_elm.classList.add("particle");
+	var areaBox = document.getElementById("particles-area").getBoundingClientRect();
+	this.dom_elm.style.left = areaBox.x + areaBox.width / 2 + "px";
+	this.dom_elm.style.top = areaBox.y + areaBox.height / 2 + "px";
+
 	this.dom_elm.innerHTML = text;
 	this.dom_elm.id = name;
+
 	document.getElementById("particles-area").appendChild(this.dom_elm);
+
+
 }
 
-function createFloatingParticle(text)
+function createBubblingParticle(text)
 {
-	particles.push(new Particle(""+Math.random(), text));
+	particles.push(new Particle(""+Math.random(), text, "bubbling"));
+}
+
+function createExplosionParticle(text)
+{
+	particles.push(new Particle(""+Math.random(), text, "falling"));
 }
 
 function startup()
@@ -55,11 +77,15 @@ function update_stats()
 	for (var i in particles) {
 		var particle_elm = document.getElementById(particles[i].name);
 		var particle = particles[i];
-		particle.lifetime -= 0.025;
 
 		var particle_rect = particle_elm.getBoundingClientRect();
-		particle_elm.style.top = (particle_rect.y - 3) + "px";
+		if (particle.type == "falling") {
+			particle.velocity.y -= 0.5;
+		}
+		particle_elm.style.left = (particle_rect.x - particle.velocity.x) + "px";
+		particle_elm.style.top = (particle_rect.y - particle.velocity.y) + "px";
 
+		particle.lifetime -= 0.025;
 		if (particle.lifetime < 0) {
 			to_remove.push(i);
 			particle_elm.parentNode.removeChild(particle_elm);
@@ -108,7 +134,7 @@ function get()
 		var harvested_gold = 10 + Math.floor(((Math.random() - .5) * 5));
 		gold_buffer += harvested_gold;
 		playRandomPitch(gold_bell);
-		createFloatingParticle("+"+harvested_gold);
+		createExplosionParticle("+"+harvested_gold);
 	}
 }
 

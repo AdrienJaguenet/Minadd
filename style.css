@@ -2,6 +2,8 @@ body
 {
 	background-color: black;
 	color: white;
+	height: 0;
+	overflow: hidden;
 }
 
 h1
@@ -12,5 +14,15 @@ h1
 .particle
 {
 	position: absolute;
+	user-select: none;
+	-moz-user-select: none;
+	font-style: italic;
+	font-weight: bold;
+}
+
+#particles-area
+{
+	margin: 0 auto;
+	text-align: center;
 }
 
