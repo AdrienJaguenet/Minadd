@@ -36,6 +36,7 @@ function playRandomPitch(audio)
 	audio.pause();
 	audio.currentTime = 0;
 	audio.mozPreservesPitch = false;
+	audio.webkitPreservesPitch = false;
 	/* random note */
 	var interval_ratio = 1;
 	switch(Math.floor(Math.random() * 4)) {
