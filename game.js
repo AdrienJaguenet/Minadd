@@ -227,7 +227,7 @@ function playRandomPitch(audio)
 function getResource(res, val)
 {
 	res.buffer += val;
-	for (var i = 0; i < Math.ceil(Math.log(val)); ++i) {
+	for (var i = 0; i < Math.max(1, Math.ceil(Math.log(val))); ++i) {
 		createExplosionParticle(res.mine_particle);
 	}
 	createBubblingParticle("+"+val);
