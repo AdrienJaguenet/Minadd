@@ -45,6 +45,7 @@ h1
 	-moz-user-select: none;
 	font-style: italic;
 	font-weight: bold;
+	z-index: 99;
 }
 
 img.upscaled
@@ -53,6 +54,23 @@ img.upscaled
 	height: 64px;
 	image-rendering: crisp-edges;
 	-moz-image-rendering: pixelated;
+}
+
+#grid
+{
+	text-align: center;
+}
+
+#grid progress
+{
+	width: 64px;
+}
+
+.mine-cell
+{
+	display: inline-block;
+	width: 64px;
+	height: 64px;
 }
 
 #particles-area

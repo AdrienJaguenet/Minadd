@@ -1,9 +1,68 @@
 var gold_bell;
 var gems_bell;
+var rock_impact;
 
 var particles = [];
 
+var grid;
+
 var p_count = 0;
+
+var rock_health = 3;
+
+function Cell()
+{
+	this.max_health = 3;
+	this.health = 3;
+}
+
+/* closure stuff */
+function makeOnClick(i, j)
+{
+	return function() {
+		mine(i, j);
+	}
+}
+
+function createGrid()
+{
+	
+	grid = Array.from(Array(4), () => new Array(4));
+	var grid_elm = document.getElementById("grid");
+	for (var i = 0; i < 4; ++i) {
+		for (var j = 0; j < 4; ++j) {
+			grid[i][j] = new Cell();
+
+			var cell_span = document.createElement("span");
+			var cell_div = document.createElement("div");
+			var cell_bar = document.createElement("progress");
+
+			cell_span.classList.add("mine-cell");
+
+			cell_div.innerHTML = "MINE";
+			cell_bar.max = grid[i][j].max_health;
+			cell_bar.id = "progress-"+i+"-"+j;
+
+			cell_span.onclick = makeOnClick(i, j);
+
+			cell_span.appendChild(cell_div);
+			cell_span.appendChild(cell_bar);
+			grid_elm.appendChild(cell_span);
+		}
+		grid_elm.appendChild(document.createElement("br"));
+	}
+}
+
+function updateGrid()
+{
+	for (var i = 0; i < 4; ++i) {
+		for (var j = 0; j < 4; ++j) {
+			var cell = grid[i][j];
+			var bar = document.getElementById("progress-"+i+"-"+j);
+			bar.value = cell.health;
+		}
+	}
+}
 
 function Resource(name)
 {
@@ -89,6 +148,9 @@ function startup()
 
 	gold_bell = new Audio("res/gold_bell.ogg");
 	gems_bell = new Audio("res/gems_bell.ogg");
+	rock_impact = new Audio("res/rock_impact.ogg");
+
+	createGrid();
 
 	setInterval(update_stats, 25);
 }
@@ -103,6 +165,7 @@ function update_buffer(res)
 
 function update_stats()
 {
+	updateGrid();
 	for (var res in resources) {
 		update_buffer(resources[res]);
 	}
@@ -178,6 +241,16 @@ function get()
 		for (var i = 0; i < Math.ceil(Math.log(harvested_gold)); ++i) {
 			createExplosionParticle("res/gold_lump_1.png");
 		}
+	}
+}
+
+function mine(x, y)
+{
+	rock_impact.play();
+	grid[x][y].health--;
+	if (grid[x][y].health <= 0) {
+		grid[x][y] = new Cell();
+		get();
 	}
 }
 
