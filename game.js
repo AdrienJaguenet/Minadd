@@ -1,5 +1,3 @@
-var gold_bell;
-var gems_bell;
 var rock_impact;
 
 var particles = [];
@@ -12,8 +10,8 @@ var rock_health = 3;
 
 function Cell()
 {
-	this.max_health = 3;
-	this.health = 3;
+	this.max_health = Math.ceil(Math.random() * 5);
+	this.health = this.max_health;
 }
 
 /* closure stuff */
@@ -69,6 +67,8 @@ function Resource(name)
 	this.qty = 0;
 	this.buffer = 0;
 	this.name = name;
+	this.mine_particle = "res/" + this.name + "_particle.png";
+	this.bell = new Audio("res/" + this.name + "_bell.ogg");
 	
 	var elm = document.createElement("p");
 	var img = document.createElement("img");
@@ -146,8 +146,6 @@ function startup()
 		gems : new Resource("gems")
 	};
 
-	gold_bell = new Audio("res/gold_bell.ogg");
-	gems_bell = new Audio("res/gems_bell.ogg");
 	rock_impact = new Audio("res/rock_impact.ogg");
 
 	createGrid();
@@ -226,21 +224,22 @@ function playRandomPitch(audio)
 	audio.play();
 }
 
+function getResource(res, val)
+{
+	res.buffer += val;
+	for (var i = 0; i < Math.ceil(Math.log(val)); ++i) {
+		createExplosionParticle(res.mine_particle);
+	}
+	createBubblingParticle("+"+val);
+	playRandomPitch(res.bell);
+}
+
 function get()
 {
 	if (Math.random() < .1) {
-		resources.gems.buffer += 1;
-		createBubblingParticle("+1");
-		playRandomPitch(gems_bell);
-		createExplosionParticle("res/gem_blue.png");
+		getResource(resources.gems, 1);
 	} else {
-		var harvested_gold = 10 + Math.floor(((Math.random() - .5) * 5));
-		resources.gold.buffer += harvested_gold;
-		playRandomPitch(gold_bell);
-		createBubblingParticle("+"+harvested_gold);
-		for (var i = 0; i < Math.ceil(Math.log(harvested_gold)); ++i) {
-			createExplosionParticle("res/gold_lump_1.png");
-		}
+		getResource(resources.gold, 10 + Math.floor(((Math.random() - .5) * 5)));
 	}
 }
 
@@ -249,8 +248,13 @@ function mine(x, y)
 	rock_impact.play();
 	grid[x][y].health--;
 	if (grid[x][y].health <= 0) {
-		grid[x][y] = new Cell();
 		get();
+
+		/* Replace with a new grid */
+		var progress_elm = document.getElementById("progress-"+x+"-"+y);
+		grid[x][y] = new Cell();
+		progress_elm.max = grid[x][y].max_health;
+		progress_elm.value = grid[x][y].health;
 	}
 }
 
