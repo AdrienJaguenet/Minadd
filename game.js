@@ -6,16 +6,19 @@ var gems_bell;
 
 var particles = [];
 
-function Particle(name, text, type)
+var p_count = 0;
+
+function Particle(v, physics_type, display_type)
 {
+	p_count ++;
+
 	this.max_lifetime = 1;
 	this.lifetime = 1;
-	this.name = name;
-	this.text = text;
-	this.type = type;
-	if (type == "bubbling") {
-		this.velocity = {x : 0, y : -3};
-	} else {
+	this.name = ""+p_count;
+	this.physics_type = physics_type;
+	if (physics_type == "bubbling") {
+		this.velocity = {x : 0, y : 20};
+	} else if (physics_type == "falling") {
 		var angle = Math.random() * Math.PI - (Math.PI / 2);
 		this.velocity = {
 			x : Math.sin(angle) * 5,
@@ -23,28 +26,35 @@ function Particle(name, text, type)
 		}
 	}
 
-	this.dom_elm = document.createElement("div");
-	this.dom_elm.classList.add("particle");
+	var dom_elm;
+	if (display_type == "image") {
+		dom_elm = document.createElement("img");
+		dom_elm.src = v;
+	} else if (display_type == "text") {
+		dom_elm = document.createElement("p");
+		dom_elm.innerHTML = v;
+	}
+	dom_elm.id = this.name;
+	dom_elm.classList.add("particle");
+
 	var areaBox = document.getElementById("particles-area").getBoundingClientRect();
-	this.dom_elm.style.left = areaBox.x + areaBox.width / 2 + "px";
-	this.dom_elm.style.top = areaBox.y + areaBox.height / 2 + "px";
+	dom_elm.style.left = areaBox.x + areaBox.width / 2 + "px";
+	dom_elm.style.top = areaBox.y + areaBox.height / 2 + "px";
 
-	this.dom_elm.innerHTML = text;
-	this.dom_elm.id = name;
 
-	document.getElementById("particles-area").appendChild(this.dom_elm);
+	document.getElementById("particles-area").appendChild(dom_elm);
 
 
 }
 
 function createBubblingParticle(text)
 {
-	particles.push(new Particle(""+Math.random(), text, "bubbling"));
+	particles.push(new Particle(text, "bubbling", "text"));
 }
 
-function createExplosionParticle(text)
+function createExplosionParticle(image)
 {
-	particles.push(new Particle(""+Math.random(), text, "falling"));
+	particles.push(new Particle(image, "falling", "image"));
 }
 
 function startup()
@@ -75,11 +85,11 @@ function update_stats()
 	var to_remove = [];
 	/* Particles */
 	for (var i in particles) {
-		var particle_elm = document.getElementById(particles[i].name);
 		var particle = particles[i];
+		var particle_elm = document.getElementById(particle.name);
 
 		var particle_rect = particle_elm.getBoundingClientRect();
-		if (particle.type == "falling") {
+		if (particle.physics_type == "falling") {
 			particle.velocity.y -= 0.5;
 		}
 		particle_elm.style.left = (particle_rect.x - particle.velocity.x) + "px";
@@ -91,7 +101,7 @@ function update_stats()
 			particle_elm.parentNode.removeChild(particle_elm);
 		}
 	}
-	for (var i in to_remove) {
+	for (var i = to_remove.length - 1; i >= 0; --i) {
 		particles.splice(to_remove[i], 1);
 	}
 
@@ -134,7 +144,10 @@ function get()
 		var harvested_gold = 10 + Math.floor(((Math.random() - .5) * 5));
 		gold_buffer += harvested_gold;
 		playRandomPitch(gold_bell);
-		createExplosionParticle("+"+harvested_gold);
+		for (var i = 0; i < Math.random() * harvested_gold; ++i) {
+			createExplosionParticle("res/gold_lump_1.png");
+			createBubblingParticle("+"+harvested_gold);
+		}
 	}
 }
 
