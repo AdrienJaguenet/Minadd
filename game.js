@@ -1,12 +1,32 @@
-var gold, gold_buffer;
-var gems, gems_buffer;
-
 var gold_bell;
 var gems_bell;
 
 var particles = [];
 
 var p_count = 0;
+
+function Resource(name)
+{
+	this.qty = 0;
+	this.buffer = 0;
+	this.name = name;
+	
+	var elm = document.createElement("p");
+	var img = document.createElement("img");
+	img.src = "res/"+name+".png";
+	img.classList.add("upscaled");
+
+	var span = document.createElement("span");
+	span.id = name+"-label";
+	span.classList.add("resource");
+	
+	
+	elm.appendChild(img);
+	elm.appendChild(span);
+	document.getElementById("resources-area").appendChild(elm);
+}
+
+var resources;
 
 function Particle(v, physics_type, display_type)
 {
@@ -61,10 +81,11 @@ function createExplosionParticle(image)
 
 function startup()
 {
-	gold = 0;
-	gems = 0;
-	gold_buffer = 0;
-	gems_buffer = 0;
+	resources =
+	{
+		gold : new Resource("gold"),
+		gems : new Resource("gems")
+	};
 
 	gold_bell = new Audio("res/gold_bell.ogg");
 	gems_bell = new Audio("res/gems_bell.ogg");
@@ -72,17 +93,19 @@ function startup()
 	setInterval(update_stats, 25);
 }
 
+function update_buffer(res)
+{
+	var transfer
+	transfer = Math.ceil(res.buffer / 10);
+	res.qty += transfer;
+	res.buffer -= transfer;
+}
+
 function update_stats()
 {
-
-	/* Buffers */
-	var transfer = Math.ceil(gold_buffer / 10);
-	gold += transfer;
-	gold_buffer -= transfer;
-
-	transfer = Math.ceil(gems_buffer / 10);
-	gems += transfer;
-	gems_buffer -= transfer;
+	for (var res in resources) {
+		update_buffer(resources[res]);
+	}
 
 	var to_remove = [];
 	/* Particles */
@@ -107,8 +130,10 @@ function update_stats()
 		particles.splice(to_remove[i], 1);
 	}
 
-	document.getElementById("gold-label").innerHTML = gold;
-	document.getElementById("gems-label").innerHTML = gems;
+	for (var i in resources) {
+		var r = resources[i];
+		document.getElementById(r.name+"-label").innerHTML = r.qty;
+	}
 }
 
 function playRandomPitch(audio)
@@ -141,15 +166,15 @@ function playRandomPitch(audio)
 function get()
 {
 	if (Math.random() < .1) {
-		gems_buffer += 1;
+		resources.gems.buffer += 1;
 		createBubblingParticle("+1");
 		createExplosionParticle("res/gem_blue.png");
 	} else {
 		var harvested_gold = 10 + Math.floor(((Math.random() - .5) * 5));
-		gold_buffer += harvested_gold;
+		resources.gold.buffer += harvested_gold;
 		playRandomPitch(gold_bell);
 		createBubblingParticle("+"+harvested_gold);
-		for (var i = 0; i < Math.random() * harvested_gold; ++i) {
+		for (var i = 0; i < Math.ceil(Math.log(harvested_gold)); ++i) {
 			createExplosionParticle("res/gold_lump_1.png");
 		}
 	}
