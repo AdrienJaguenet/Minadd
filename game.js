@@ -37,20 +37,21 @@ function playRandomPitch(audio)
 	audio.currentTime = 0;
 	audio.mozPreservesPitch = false;
 	audio.webkitPreservesPitch = false;
+	audio.volume = 0.5 + (Math.random() / 8) - 0.125;
 	/* random note */
 	var interval_ratio = 1;
 	switch(Math.floor(Math.random() * 4)) {
 		case 0:
-			interval_ratio = 3/2; // perfect fifth
+			interval_ratio = 9/8;
 			break;
 		case 1:
-			interval_ratio = 4/3; // perfect fourth
+			interval_ratio = 3/2;
 			break;
 		case 2:
-			interval_ratio = 2/3;
+			interval_ratio = 4/3;
 			break;
 		case 3:
-			interval_ratio = 3/2;
+			interval_ratio = 16/9;
 			break;
 	}
 	audio.playbackRate = interval_ratio;
