@@ -6,6 +6,8 @@
 
 body
 {
+	user-select: none;
+	-moz-user-select: none;
 	background-color: black;
 	color: white;
 	height: 0;
@@ -41,8 +43,6 @@ h1
 .particle
 {
 	position: absolute;
-	user-select: none;
-	-moz-user-select: none;
 	font-style: italic;
 	font-weight: bold;
 	z-index: 99;
