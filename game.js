@@ -4,6 +4,27 @@ var gems, gems_buffer;
 var gold_bell;
 var gems_bell;
 
+var particles = [];
+
+function Particle(name, text)
+{
+	this.max_lifetime = 1;
+	this.lifetime = 1;
+	this.name = name;
+	this.text = text;
+
+	this.dom_elm = document.createElement("div");
+	this.dom_elm.classList.add("particle");
+	this.dom_elm.innerHTML = text;
+	this.dom_elm.id = name;
+	document.getElementById("particles-area").appendChild(this.dom_elm);
+}
+
+function createFloatingParticle(text)
+{
+	particles.push(new Particle(""+Math.random(), text));
+}
+
 function startup()
 {
 	gold = 0;
@@ -19,6 +40,8 @@ function startup()
 
 function update_stats()
 {
+
+	/* Buffers */
 	var transfer = Math.ceil(gold_buffer / 10);
 	gold += transfer;
 	gold_buffer -= transfer;
@@ -26,6 +49,25 @@ function update_stats()
 	transfer = Math.ceil(gems_buffer / 10);
 	gems += transfer;
 	gems_buffer -= transfer;
+
+	var to_remove = [];
+	/* Particles */
+	for (var i in particles) {
+		var particle_elm = document.getElementById(particles[i].name);
+		var particle = particles[i];
+		particle.lifetime -= 0.025;
+
+		var particle_rect = particle_elm.getBoundingClientRect();
+		particle_elm.style.top = (particle_rect.y - 3) + "px";
+
+		if (particle.lifetime < 0) {
+			to_remove.push(i);
+			particle_elm.parentNode.removeChild(particle_elm);
+		}
+	}
+	for (var i in to_remove) {
+		particles.splice(to_remove[i], 1);
+	}
 
 	document.getElementById("gold-label").innerHTML = gold;
 	document.getElementById("gems-label").innerHTML = gems;
@@ -63,8 +105,10 @@ function get()
 	if (Math.random() < .1) {
 		gems_buffer += 1;
 	} else {
-		gold_buffer += 10;
+		var harvested_gold = 10 + Math.floor(((Math.random() - .5) * 5));
+		gold_buffer += harvested_gold;
 		playRandomPitch(gold_bell);
+		createFloatingParticle("+"+harvested_gold);
 	}
 }
 
