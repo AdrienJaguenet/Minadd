@@ -1,0 +1,2 @@
+# Minadd
+Minimalist addictive game
