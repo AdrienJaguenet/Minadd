@@ -168,6 +168,7 @@ function get()
 	if (Math.random() < .1) {
 		resources.gems.buffer += 1;
 		createBubblingParticle("+1");
+		playRandomPitch(gems_bell);
 		createExplosionParticle("res/gem_blue.png");
 	} else {
 		var harvested_gold = 10 + Math.floor(((Math.random() - .5) * 5));
