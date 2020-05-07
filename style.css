@@ -1,14 +1,41 @@
+@font-face
+{
+	font-family: pixel;
+	src: url("fonts/ArcadeClassic.ttf");
+}
+
 body
 {
 	background-color: black;
 	color: white;
 	height: 0;
 	overflow: hidden;
+	font-smooth: never;
+}
+
+body, button
+{
+	font-family: "pixel";
+}
+
+button
+{
+	background-color: black;
+	border: 3px white solid;
+	padding: 30px;
+	color: white;
+	font-size: 34px;
+}
+
+button:active
+{
+	background-color: grey;
 }
 
 h1
 {
 	text-align: center;
+	font-size: 64px;
 }
 
 .particle
@@ -20,9 +47,23 @@ h1
 	font-weight: bold;
 }
 
+img.upscaled
+{
+	width: 64px;
+	height: 64px;
+	image-rendering: crisp-edges;
+	-moz-image-rendering: pixelated;
+}
+
 #particles-area
 {
 	margin: 0 auto;
 	text-align: center;
+	width: 10em;
+}
+
+.resource
+{
+	font-size: 24px;
 }
 

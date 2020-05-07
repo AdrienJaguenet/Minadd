@@ -21,24 +21,26 @@ function Particle(v, physics_type, display_type)
 	} else if (physics_type == "falling") {
 		var angle = Math.random() * Math.PI - (Math.PI / 2);
 		this.velocity = {
-			x : Math.sin(angle) * 5,
-			y : Math.cos(angle) * 2
+			x : Math.sin(angle) * 10,
+			y : Math.cos(angle) * 4
 		}
 	}
 
 	var dom_elm;
 	if (display_type == "image") {
 		dom_elm = document.createElement("img");
+		dom_elm.classList.add("upscaled");
 		dom_elm.src = v;
 	} else if (display_type == "text") {
 		dom_elm = document.createElement("p");
+		dom_elm.classList.add("resource");
 		dom_elm.innerHTML = v;
 	}
 	dom_elm.id = this.name;
 	dom_elm.classList.add("particle");
 
 	var areaBox = document.getElementById("particles-area").getBoundingClientRect();
-	dom_elm.style.left = areaBox.x + areaBox.width / 2 + "px";
+	dom_elm.style.left = areaBox.x + Math.floor(Math.random() * areaBox.width) + "px";
 	dom_elm.style.top = areaBox.y + areaBox.height / 2 + "px";
 
 
@@ -90,7 +92,7 @@ function update_stats()
 
 		var particle_rect = particle_elm.getBoundingClientRect();
 		if (particle.physics_type == "falling") {
-			particle.velocity.y -= 0.5;
+			particle.velocity.y -= 1;
 		}
 		particle_elm.style.left = (particle_rect.x - particle.velocity.x) + "px";
 		particle_elm.style.top = (particle_rect.y - particle.velocity.y) + "px";
@@ -140,13 +142,15 @@ function get()
 {
 	if (Math.random() < .1) {
 		gems_buffer += 1;
+		createBubblingParticle("+1");
+		createExplosionParticle("res/gem_blue.png");
 	} else {
 		var harvested_gold = 10 + Math.floor(((Math.random() - .5) * 5));
 		gold_buffer += harvested_gold;
 		playRandomPitch(gold_bell);
+		createBubblingParticle("+"+harvested_gold);
 		for (var i = 0; i < Math.random() * harvested_gold; ++i) {
 			createExplosionParticle("res/gold_lump_1.png");
-			createBubblingParticle("+"+harvested_gold);
 		}
 	}
 }
