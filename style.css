@@ -85,3 +85,9 @@ img.upscaled
 	font-size: 24px;
 }
 
+.resource-label
+{
+	display: inline-block;
+}
+
+

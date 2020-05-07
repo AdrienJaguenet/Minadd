@@ -10,6 +10,16 @@ var rock_health = 3;
 
 function Cell()
 {
+	if (Math.random() < .05) {
+		this.res = "gems";
+		this.qty = 1;
+	} else if (Math.random() < .1) {
+		this.res = "gold";
+		this.qty = 2 + Math.ceil(Math.random() * 4);
+	} else {
+		this.res = "silver";
+		this.qty = 5 + Math.ceil(Math.random() * 8);
+	}
 	this.max_health = Math.ceil(Math.random() * 5);
 	this.health = this.max_health;
 }
@@ -32,18 +42,21 @@ function createGrid()
 			grid[i][j] = new Cell();
 
 			var cell_span = document.createElement("span");
-			var cell_div = document.createElement("div");
+			var cell_img = document.createElement("img");
 			var cell_bar = document.createElement("progress");
 
 			cell_span.classList.add("mine-cell");
 
-			cell_div.innerHTML = "MINE";
+			cell_img.src = resources[grid[i][j].res].ore;
+			cell_img.id = "cellimg-"+i+"-"+j;
+			cell_img.classList.add("upscaled");
+
 			cell_bar.max = grid[i][j].max_health;
 			cell_bar.id = "progress-"+i+"-"+j;
 
 			cell_span.onclick = makeOnClick(i, j);
 
-			cell_span.appendChild(cell_div);
+			cell_span.appendChild(cell_img);
 			cell_span.appendChild(cell_bar);
 			grid_elm.appendChild(cell_span);
 		}
@@ -69,6 +82,7 @@ function Resource(name)
 	this.name = name;
 	this.mine_particle = "res/" + this.name + "_particle.png";
 	this.bell = new Audio("res/" + this.name + "_bell.ogg");
+	this.ore = "res/"+this.name+"_ore.png";
 	
 	var elm = document.createElement("p");
 	var img = document.createElement("img");
@@ -79,6 +93,7 @@ function Resource(name)
 	span.id = name+"-label";
 	span.classList.add("resource");
 	
+	elm.classList.add("resource-label");
 	
 	elm.appendChild(img);
 	elm.appendChild(span);
@@ -142,6 +157,7 @@ function startup()
 {
 	resources =
 	{
+		silver : new Resource("silver"),
 		gold : new Resource("gold"),
 		gems : new Resource("gems")
 	};
@@ -234,27 +250,22 @@ function getResource(res, val)
 	playRandomPitch(res.bell);
 }
 
-function get()
-{
-	if (Math.random() < .1) {
-		getResource(resources.gems, 1);
-	} else {
-		getResource(resources.gold, 10 + Math.floor(((Math.random() - .5) * 5)));
-	}
-}
-
 function mine(x, y)
 {
 	rock_impact.play();
 	grid[x][y].health--;
 	if (grid[x][y].health <= 0) {
-		get();
+		var cell = grid[x][y];
+		getResource(resources[cell.res], cell.qty);
 
 		/* Replace with a new grid */
 		var progress_elm = document.getElementById("progress-"+x+"-"+y);
 		grid[x][y] = new Cell();
 		progress_elm.max = grid[x][y].max_health;
 		progress_elm.value = grid[x][y].health;
+
+		var img_elm = document.getElementById("cellimg-"+x+"-"+y);
+		img_elm.src = resources[grid[x][y].res].ore;
 	}
 }
 
