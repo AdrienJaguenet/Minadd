@@ -186,6 +186,9 @@ function update_buffer(res)
 {
 	var transfer
 	transfer = Math.ceil(res.buffer / 10);
+	if (transfer == 0) {
+		document.getElementById(res.name+"-label").classList.remove("resource-highlight");
+	}
 	res.qty += transfer;
 	res.buffer -= transfer;
 }
@@ -218,20 +221,24 @@ function update_particles()
 
 }
 
-function update_stats()
+function update_resources()
 {
-	updateGrid();
-
 	for (var res in resources) {
 		update_buffer(resources[res]);
 	}
 
-	update_particles();
-
 	for (var i in resources) {
 		var r = resources[i];
-		document.getElementById(r.name+"-label").innerHTML = r.qty;
+		var label = document.getElementById(r.name+"-label");
+		label.innerHTML = r.qty;
 	}
+}
+
+function update_stats()
+{
+	updateGrid();
+	update_particles();
+	update_resources();
 }
 
 function playRandomPitch(audio)
@@ -267,6 +274,8 @@ function getResource(res, val)
 	for (var i = 0; i < Math.max(1, Math.ceil(Math.log(val))); ++i) {
 		createExplosionParticle(res.mine_particle, document.getElementById("particles-area"));
 	}
+	var label = document.getElementById(res.name+"-label");
+	label.classList.add("resource-highlight");
 	createBubblingParticle("+"+val, document.getElementById(res.name+"-label-particles"));
 	playRandomPitch(res.bell);
 }

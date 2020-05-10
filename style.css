@@ -45,6 +45,7 @@ h1
 	position: absolute;
 	font-style: italic;
 	font-weight: bold;
+	color: yellow;
 	z-index: 99;
 }
 
@@ -88,6 +89,13 @@ img.upscaled
 .resource-label
 {
 	display: inline-block;
+}
+
+.resource.resource-highlight
+{
+	font-weight: bold;
+	color: yellow;
+	transition: all 0.4s;
 }
 
 
