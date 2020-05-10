@@ -84,19 +84,23 @@ function Resource(name)
 	this.bell = new Audio("res/" + this.name + "_bell.ogg");
 	this.ore = "res/"+this.name+"_ore.png";
 	
-	var elm = document.createElement("p");
+	var elm = document.createElement("div");
 	var img = document.createElement("img");
 	img.src = "res/"+name+".png";
 	img.classList.add("upscaled");
 
-	var span = document.createElement("span");
-	span.id = name+"-label";
-	span.classList.add("resource");
-	
+	var div = document.createElement("div");
+	div.id = name+"-label";
+	div.classList.add("resource");
+
+	var p_area = document.createElement("div");
+	p_area.id = name+"-label-particles";
+	elm.appendChild(p_area);
+
 	elm.classList.add("resource-label");
 	
 	elm.appendChild(img);
-	elm.appendChild(span);
+	elm.appendChild(div);
 	document.getElementById("resources-area").appendChild(elm);
 }
 
@@ -109,9 +113,12 @@ function Particle(v, physics_type, display_type)
 	this.max_lifetime = 1;
 	this.lifetime = 1;
 	this.name = ""+p_count;
+	console.log("Creating particle "+this.name);
+
 	this.physics_type = physics_type;
+
 	if (physics_type == "bubbling") {
-		this.velocity = {x : 0, y : 20};
+		this.velocity = {x : 0, y : 5};
 	} else if (physics_type == "falling") {
 		var angle = Math.random() * Math.PI - (Math.PI / 2);
 		this.velocity = {
@@ -120,37 +127,43 @@ function Particle(v, physics_type, display_type)
 		}
 	}
 
-	var dom_elm;
 	if (display_type == "image") {
-		dom_elm = document.createElement("img");
-		dom_elm.classList.add("upscaled");
-		dom_elm.src = v;
+		this.dom_elm = document.createElement("img");
+		this.dom_elm.classList.add("upscaled");
+		this.dom_elm.src = v;
 	} else if (display_type == "text") {
-		dom_elm = document.createElement("p");
-		dom_elm.classList.add("resource");
-		dom_elm.innerHTML = v;
+		this.dom_elm = document.createElement("div");
+		this.dom_elm.classList.add("resource");
+		this.dom_elm.innerHTML = v;
 	}
-	dom_elm.id = this.name;
-	dom_elm.classList.add("particle");
-
-	var areaBox = document.getElementById("particles-area").getBoundingClientRect();
-	dom_elm.style.left = areaBox.x + Math.floor(Math.random() * areaBox.width) + "px";
-	dom_elm.style.top = areaBox.y + areaBox.height / 2 + "px";
-
-
-	document.getElementById("particles-area").appendChild(dom_elm);
+	this.dom_elm.id = this.name;
+	this.dom_elm.classList.add("particle");
 
 
 }
 
-function createBubblingParticle(text)
+function createBubblingParticle(text, elm)
 {
-	particles.push(new Particle(text, "bubbling", "text"));
+	var particle = new Particle(text, "bubbling", "text");
+	var areaBox = elm.getBoundingClientRect();
+	particle.dom_elm.style.left = areaBox.x + Math.floor(Math.random() * areaBox.width) + "px";
+	particle.dom_elm.style.top = areaBox.y + areaBox.height / 2 + "px";
+
+	elm.appendChild(particle.dom_elm);
+	console.log("Attaching particle " + particle.dom_elm.id + " to element " + elm.id);
+	particles.push(particle);
 }
 
-function createExplosionParticle(image)
+function createExplosionParticle(image, elm)
 {
-	particles.push(new Particle(image, "falling", "image"));
+	var particle = new Particle(image, "falling", "image");
+	var areaBox = elm.getBoundingClientRect();
+	particle.dom_elm.style.left = areaBox.x + Math.floor(Math.random() * areaBox.width) + "px";
+	particle.dom_elm.style.top = areaBox.y + areaBox.height / 2 + "px";
+
+	console.log("Attaching particle " + particle.dom_elm.id + " to element " + elm.id);
+	elm.appendChild(particle.dom_elm);
+	particles.push(particle);
 }
 
 function startup()
@@ -177,20 +190,15 @@ function update_buffer(res)
 	res.buffer -= transfer;
 }
 
-function update_stats()
+function update_particles()
 {
-	updateGrid();
-	for (var res in resources) {
-		update_buffer(resources[res]);
-	}
-
 	var to_remove = [];
 	/* Particles */
 	for (var i in particles) {
 		var particle = particles[i];
 		var particle_elm = document.getElementById(particle.name);
-
 		var particle_rect = particle_elm.getBoundingClientRect();
+
 		if (particle.physics_type == "falling") {
 			particle.velocity.y -= 1;
 		}
@@ -199,6 +207,7 @@ function update_stats()
 
 		particle.lifetime -= 0.025;
 		if (particle.lifetime < 0) {
+			console.log("Removing particle " + particle.name);
 			to_remove.push(i);
 			particle_elm.parentNode.removeChild(particle_elm);
 		}
@@ -206,6 +215,18 @@ function update_stats()
 	for (var i = to_remove.length - 1; i >= 0; --i) {
 		particles.splice(to_remove[i], 1);
 	}
+
+}
+
+function update_stats()
+{
+	updateGrid();
+
+	for (var res in resources) {
+		update_buffer(resources[res]);
+	}
+
+	update_particles();
 
 	for (var i in resources) {
 		var r = resources[i];
@@ -244,9 +265,9 @@ function getResource(res, val)
 {
 	res.buffer += val;
 	for (var i = 0; i < Math.max(1, Math.ceil(Math.log(val))); ++i) {
-		createExplosionParticle(res.mine_particle);
+		createExplosionParticle(res.mine_particle, document.getElementById("particles-area"));
 	}
-	createBubblingParticle("+"+val);
+	createBubblingParticle("+"+val, document.getElementById(res.name+"-label-particles"));
 	playRandomPitch(res.bell);
 }
 
@@ -258,7 +279,7 @@ function mine(x, y)
 		var cell = grid[x][y];
 		getResource(resources[cell.res], cell.qty);
 
-		/* Replace with a new grid */
+		/* Replace with a new cell */
 		var progress_elm = document.getElementById("progress-"+x+"-"+y);
 		grid[x][y] = new Cell();
 		progress_elm.max = grid[x][y].max_health;
