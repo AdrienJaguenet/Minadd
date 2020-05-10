@@ -9,11 +9,16 @@
 	</head>
 	<body onload="startup();">
 		<h1>Minadd</h1>
-		<div id="particles-area">
-		</div>
-		<div id="grid">
-		</div>
-		<div id="resources-area">
+		<div id="game-container">
+			<div id="resources-area" class="vcontainer">
+			</div>
+			<div id="grid" class="vcontainer">
+				<div id="particles-area"></div>
+			</div>
+			<div id="upgrade-area" class="vcontainer">
+				<p>Multiplier: x<span id="multiplier-label"><span></p>
+				<button onclick="upgrade_multiplier();">Upgrade multiplier</button>
+			</div>
 		</div>
 	</body>
 </html>

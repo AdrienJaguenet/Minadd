@@ -15,6 +15,12 @@ body
 	font-smooth: never;
 }
 
+.game-container
+{
+	display: flex;
+	justify-content: space-between;
+}
+
 body, button
 {
 	font-family: "pixel";
@@ -24,9 +30,7 @@ button
 {
 	background-color: black;
 	border: 3px white solid;
-	padding: 30px;
 	color: white;
-	font-size: 34px;
 }
 
 button:active
@@ -57,11 +61,6 @@ img.upscaled
 	-moz-image-rendering: pixelated;
 }
 
-#grid
-{
-	text-align: center;
-}
-
 #grid progress
 {
 	width: 64px;
@@ -78,17 +77,16 @@ img.upscaled
 {
 	margin: 0 auto;
 	text-align: center;
-	width: 10em;
 }
 
 .resource
 {
 	font-size: 24px;
+	width: 8em;
 }
 
 .resource-label
 {
-	display: inline-block;
 }
 
 .resource.resource-highlight
@@ -98,4 +96,9 @@ img.upscaled
 	transition: all 0.4s;
 }
 
+.vcontainer
+{
+	display: inline-block;
+	width: 30%;
+}
 

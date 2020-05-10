@@ -8,9 +8,15 @@ var p_count = 0;
 
 var rock_health = 3;
 
+var mine_multiplier = 1;
+var upgrade_bell;
+
 function Cell()
 {
-	if (Math.random() < .05) {
+	if (Math.random() < 0.01) {
+		this.res = "ruby";
+		this.qty = 1;
+	} else if (Math.random() < .05) {
 		this.res = "gems";
 		this.qty = 1;
 	} else if (Math.random() < .1) {
@@ -113,7 +119,6 @@ function Particle(v, physics_type, display_type)
 	this.max_lifetime = 1;
 	this.lifetime = 1;
 	this.name = ""+p_count;
-	console.log("Creating particle "+this.name);
 
 	this.physics_type = physics_type;
 
@@ -147,10 +152,9 @@ function createBubblingParticle(text, elm)
 	var particle = new Particle(text, "bubbling", "text");
 	var areaBox = elm.getBoundingClientRect();
 	particle.dom_elm.style.left = areaBox.x + Math.floor(Math.random() * areaBox.width) + "px";
-	particle.dom_elm.style.top = areaBox.y + areaBox.height / 2 + "px";
+	particle.dom_elm.style.top = areaBox.y - particle.dom_elm.getBoundingClientRect().height;
 
 	elm.appendChild(particle.dom_elm);
-	console.log("Attaching particle " + particle.dom_elm.id + " to element " + elm.id);
 	particles.push(particle);
 }
 
@@ -161,7 +165,6 @@ function createExplosionParticle(image, elm)
 	particle.dom_elm.style.left = areaBox.x + Math.floor(Math.random() * areaBox.width) + "px";
 	particle.dom_elm.style.top = areaBox.y + areaBox.height / 2 + "px";
 
-	console.log("Attaching particle " + particle.dom_elm.id + " to element " + elm.id);
 	elm.appendChild(particle.dom_elm);
 	particles.push(particle);
 }
@@ -172,10 +175,12 @@ function startup()
 	{
 		silver : new Resource("silver"),
 		gold : new Resource("gold"),
-		gems : new Resource("gems")
+		gems : new Resource("gems"),
+		ruby : new Resource("ruby")
 	};
 
 	rock_impact = new Audio("res/rock_impact.ogg");
+	upgrade_bell = new Audio("res/upgrade_bell.ogg");
 
 	createGrid();
 
@@ -210,7 +215,6 @@ function update_particles()
 
 		particle.lifetime -= 0.025;
 		if (particle.lifetime < 0) {
-			console.log("Removing particle " + particle.name);
 			to_remove.push(i);
 			particle_elm.parentNode.removeChild(particle_elm);
 		}
@@ -239,6 +243,7 @@ function update_stats()
 	updateGrid();
 	update_particles();
 	update_resources();
+	document.getElementById("multiplier-label").innerHTML = mine_multiplier.toFixed(2);
 }
 
 function playRandomPitch(audio)
@@ -286,7 +291,7 @@ function mine(x, y)
 	grid[x][y].health--;
 	if (grid[x][y].health <= 0) {
 		var cell = grid[x][y];
-		getResource(resources[cell.res], cell.qty);
+		getResource(resources[cell.res], Math.floor(cell.qty * mine_multiplier));
 
 		/* Replace with a new cell */
 		var progress_elm = document.getElementById("progress-"+x+"-"+y);
@@ -297,5 +302,11 @@ function mine(x, y)
 		var img_elm = document.getElementById("cellimg-"+x+"-"+y);
 		img_elm.src = resources[grid[x][y].res].ore;
 	}
+}
+
+function upgrade_multiplier()
+{
+	mine_multiplier *= 1.1;
+	upgrade_bell.play();
 }
 
