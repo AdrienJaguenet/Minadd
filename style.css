@@ -56,22 +56,22 @@ h1
 
 img.upscaled
 {
-	width: 64px;
-	height: 64px;
+	width: 32px;
+	height: 32px;
 	image-rendering: crisp-edges;
 	-moz-image-rendering: pixelated;
 }
 
 #grid progress
 {
-	width: 64px;
+	width: 32px;
 }
 
 .mine-cell
 {
 	display: inline-block;
-	width: 64px;
-	height: 64px;
+	width: 32px;
+	height: 32px;
 }
 
 #particles-area
@@ -108,6 +108,5 @@ img.upscaled
 .vcontainer
 {
 	display: inline-block;
-	width: 30%;
 }
 
