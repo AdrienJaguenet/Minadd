@@ -49,6 +49,13 @@ function makeSell(res, val)
 	}
 }
 
+function makeSellAll(res)
+{
+	return function() {
+		sell(res, resources[res].qty);
+	}
+}
+
 function createGrid()
 {
 	
@@ -120,11 +127,17 @@ function Resource(name, value)
 	sell_button.classList.add("sell-button");
 	sell_button.innerHTML = "sell";
 
+	var sellall_button = document.createElement("button");
+	sellall_button.onclick = makeSellAll(this.name);
+	sellall_button.classList.add("sell-button");
+	sellall_button.innerHTML = "sell all";
+
 	elm.classList.add("resource-label");
 	
 	elm.appendChild(img);
 	elm.appendChild(div);
 	elm.appendChild(sell_button);
+	elm.appendChild(sellall_button);
 	document.getElementById("resources-area").appendChild(elm);
 }
 
@@ -212,7 +225,7 @@ function startup()
 function update_buffer(res)
 {
 	var transfer
-	transfer = Math.ceil(res.buffer / 10);
+	transfer =res.buffer < 0 ? Math.floor(res.buffer/10) : Math.ceil(res.buffer / 10);
 	if (transfer == 0) {
 		document.getElementById(res.name+"-label").classList.remove("resource-highlight");
 		document.getElementById(res.name+"-label").classList.remove("resource-highlight-loss");
