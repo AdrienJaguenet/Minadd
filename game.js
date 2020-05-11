@@ -79,6 +79,7 @@ function createGrid()
 			cell_bar.id = "progress-"+i+"-"+j;
 
 			cell_span.onclick = makeOnClick(i, j);
+			cell_span.ontouchstart = makeOnClick(i, j);
 
 			cell_span.appendChild(cell_img);
 			cell_span.appendChild(cell_bar);
@@ -124,11 +125,13 @@ function Resource(name, value)
 
 	var sell_button = document.createElement("button");
 	sell_button.onclick = makeSell(this.name, 1);
+	sell_button.ontouchstart = makeSell(this.name, 1);
 	sell_button.classList.add("sell-button");
 	sell_button.innerHTML = "sell";
 
 	var sellall_button = document.createElement("button");
 	sellall_button.onclick = makeSellAll(this.name);
+	sellall_button.ontouchstart = makeSellAll(this.name);
 	sellall_button.classList.add("sell-button");
 	sellall_button.innerHTML = "sell all";
 
