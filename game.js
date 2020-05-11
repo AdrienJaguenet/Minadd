@@ -11,6 +11,10 @@ var rock_health = 3;
 var mine_multiplier = 1;
 var upgrade_bell;
 
+var money;
+var money_buffer;
+var money_bell;
+
 function Cell()
 {
 	if (Math.random() < 0.01) {
@@ -35,6 +39,13 @@ function makeOnClick(i, j)
 {
 	return function() {
 		mine(i, j);
+	}
+}
+
+function makeSell(res, val)
+{
+	return function() {
+		sell(res, val);
 	}
 }
 
@@ -81,7 +92,7 @@ function updateGrid()
 	}
 }
 
-function Resource(name)
+function Resource(name, value)
 {
 	this.qty = 0;
 	this.buffer = 0;
@@ -89,6 +100,7 @@ function Resource(name)
 	this.mine_particle = "res/" + this.name + "_particle.png";
 	this.bell = new Audio("res/" + this.name + "_bell.ogg");
 	this.ore = "res/"+this.name+"_ore.png";
+	this.value = value;
 	
 	var elm = document.createElement("div");
 	var img = document.createElement("img");
@@ -103,10 +115,16 @@ function Resource(name)
 	p_area.id = name+"-label-particles";
 	elm.appendChild(p_area);
 
+	var sell_button = document.createElement("button");
+	sell_button.onclick = makeSell(this.name, 1);
+	sell_button.classList.add("sell-button");
+	sell_button.innerHTML = "sell";
+
 	elm.classList.add("resource-label");
 	
 	elm.appendChild(img);
 	elm.appendChild(div);
+	elm.appendChild(sell_button);
 	document.getElementById("resources-area").appendChild(elm);
 }
 
@@ -173,14 +191,18 @@ function startup()
 {
 	resources =
 	{
-		silver : new Resource("silver"),
-		gold : new Resource("gold"),
-		gems : new Resource("gems"),
-		ruby : new Resource("ruby")
+		silver : new Resource("silver", 10),
+		gold : new Resource("gold", 50),
+		gems : new Resource("gems", 200),
+		ruby : new Resource("ruby", 500)
 	};
+
+	money = 0;
+	money_buffer = 0;
 
 	rock_impact = new Audio("res/rock_impact.ogg");
 	upgrade_bell = new Audio("res/upgrade_bell.ogg");
+	money_bell = new Audio("res/money_bell.ogg");
 
 	createGrid();
 
@@ -193,6 +215,7 @@ function update_buffer(res)
 	transfer = Math.ceil(res.buffer / 10);
 	if (transfer == 0) {
 		document.getElementById(res.name+"-label").classList.remove("resource-highlight");
+		document.getElementById(res.name+"-label").classList.remove("resource-highlight-loss");
 	}
 	res.qty += transfer;
 	res.buffer -= transfer;
@@ -227,6 +250,7 @@ function update_particles()
 
 function update_resources()
 {
+
 	for (var res in resources) {
 		update_buffer(resources[res]);
 	}
@@ -238,11 +262,26 @@ function update_resources()
 	}
 }
 
+function update_money()
+{
+	var transfer;
+	transfer = Math.ceil(money_buffer / 10);
+	if (transfer == 0) {
+		document.getElementById("money-label").classList.remove("resource-highlight");
+	}
+	money += transfer;
+	money_buffer -= transfer;
+
+	document.getElementById("money-label").innerHTML = money;
+
+}
+
 function update_stats()
 {
 	updateGrid();
 	update_particles();
 	update_resources();
+	update_money();
 	document.getElementById("multiplier-label").innerHTML = mine_multiplier.toFixed(2);
 }
 
@@ -273,16 +312,29 @@ function playRandomPitch(audio)
 	audio.play();
 }
 
+function get_money(val)
+{
+	money_buffer += val;
+	var label = document.getElementById("money-label");
+	label.classList.add("resource-highlight");
+	createBubblingParticle("+"+val+" coins", document.getElementById("money-label-particles"));
+	playRandomPitch(money_bell);
+}
+
 function getResource(res, val)
 {
 	res.buffer += val;
-	for (var i = 0; i < Math.max(1, Math.ceil(Math.log(val))); ++i) {
-		createExplosionParticle(res.mine_particle, document.getElementById("particles-area"));
-	}
 	var label = document.getElementById(res.name+"-label");
-	label.classList.add("resource-highlight");
-	createBubblingParticle("+"+val, document.getElementById(res.name+"-label-particles"));
-	playRandomPitch(res.bell);
+	if (val > 0) {
+		for (var i = 0; i < Math.max(1, Math.ceil(Math.log(val))); ++i) {
+			createExplosionParticle(res.mine_particle, document.getElementById("particles-area"));
+		}
+		label.classList.add("resource-highlight");
+		playRandomPitch(res.bell);
+	} else {
+		label.classList.add("resource-highlight-loss");
+	}
+	createBubblingParticle((val < 0 ? "" : "+") +val, document.getElementById(res.name+"-label-particles"));
 }
 
 function mine(x, y)
@@ -301,6 +353,14 @@ function mine(x, y)
 
 		var img_elm = document.getElementById("cellimg-"+x+"-"+y);
 		img_elm.src = resources[grid[x][y].res].ore;
+	}
+}
+
+function sell(res, val)
+{
+	if (resources[res].qty > 0) {
+		get_money(val * resources[res].value);
+		getResource(resources[res], -1*val);
 	}
 }
 

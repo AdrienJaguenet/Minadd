@@ -96,6 +96,14 @@ img.upscaled
 	transition: all 0.4s;
 }
 
+.resource.resource-highlight-loss
+{
+	font-weight: bold;
+	color: red;
+	transition: all 0.4s;
+}
+
+
 .vcontainer
 {
 	display: inline-block;
