@@ -4,6 +4,7 @@
 	<head>
 		<title>Minadd</title>
 		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<meta property="og:title" content="Play Minadd!"/>
 		<meta property="og:url" content="https://adrienjaguenet.github.io/Minadd/"/>
 		<meta property="og:image" content="https://adrienjaguenet.github.io/Minadd/res/gems.png"/>
@@ -13,15 +14,15 @@
 	<body onload="startup();">
 		<h1>Minadd</h1>
 		<div id="game-container">
-			<div id="resources-area" class="vcontainer">
-				<div id="money-label-particles">
-					<p><span id="money-label"></span>&nbsp;coins</p>
-				</div>
+			<div id="money-label-particles">
+				<p><span id="money-label"></span>&nbsp;coins</p>
 			</div>
-			<div id="grid" class="vcontainer">
+			<div id="resources-area" class="area scrollmenu">
+			</div>
+			<div id="grid" class="area">
 				<div id="particles-area"></div>
 			</div>
-			<div id="upgrade-area">
+			<div id="upgrade-area" class="area">
 				<p>Multiplier: x<span id="multiplier-label"><span></p>
 				<button onclick="upgrade_multiplier();">Upgrade multiplier</button>
 			</div>

@@ -65,25 +65,27 @@ function createGrid()
 		for (var j = 0; j < 4; ++j) {
 			grid[i][j] = new Cell();
 
-			var cell_span = document.createElement("span");
+			var cell_div = document.createElement("div");
 			var cell_img = document.createElement("img");
 			var cell_bar = document.createElement("progress");
 
-			cell_span.classList.add("mine-cell");
+			cell_div.classList.add("mine-cell");
 
 			cell_img.src = resources[grid[i][j].res].ore;
 			cell_img.id = "cellimg-"+i+"-"+j;
-			cell_img.classList.add("upscaled");
+			cell_img.classList.add("contained-icon");
 
 			cell_bar.max = grid[i][j].max_health;
 			cell_bar.id = "progress-"+i+"-"+j;
+			cell_bar.classList.add("cell-progress");
 
-			cell_span.onclick = makeOnClick(i, j);
-			cell_span.ontouchstart = makeOnClick(i, j);
+			cell_div.onclick = makeOnClick(i, j);
+			cell_div.ontouchstart = makeOnClick(i, j);
 
-			cell_span.appendChild(cell_img);
-			cell_span.appendChild(cell_bar);
-			grid_elm.appendChild(cell_span);
+			cell_div.appendChild(cell_img);
+			cell_div.appendChild(document.createElement("br"));
+			cell_div.appendChild(cell_bar);
+			grid_elm.appendChild(cell_div);
 		}
 		grid_elm.appendChild(document.createElement("br"));
 	}
@@ -111,9 +113,10 @@ function Resource(name, value)
 	this.value = value;
 	
 	var elm = document.createElement("div");
+	elm.classList.add("resource-container");
 	var img = document.createElement("img");
 	img.src = "res/"+name+".png";
-	img.classList.add("upscaled");
+	img.classList.add("contained-icon");
 
 	var div = document.createElement("div");
 	div.id = name+"-label";

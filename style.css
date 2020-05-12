@@ -18,8 +18,17 @@ body
 
 .game-container
 {
-	display: flex;
 	justify-content: space-between;
+	flex-flow: row wrap;
+	align-items: flex-start;
+	align-content: flex-start;
+	position: relative;
+}
+
+.area
+{
+	vertical-align: top;
+	display: inline-block;
 }
 
 body, button
@@ -55,36 +64,27 @@ h1
 	z-index: 99;
 }
 
-img.upscaled
+
+.contained-icon
 {
-	width: 32px;
-	height: 32px;
+	width: 100%;
 	image-rendering: crisp-edges;
 	-moz-image-rendering: pixelated;
-}
-
-#grid progress
-{
-	width: 32px;
 }
 
 .mine-cell
 {
 	display: inline-block;
-	width: 32px;
-	height: 32px;
 }
 
-#particles-area
+.cell-progress
 {
-	margin: 0 auto;
-	text-align: center;
+	width: 75px;
 }
 
 .resource
 {
 	font-size: 24px;
-	width: 8em;
 }
 
 .resource-label
@@ -105,9 +105,14 @@ img.upscaled
 	transition: all 0.4s;
 }
 
-
-.vcontainer
+.resource-container
 {
 	display: inline-block;
+}
+
+.scrollmenu
+{
+	overflow: auto;
+	white-space: nowrap;
 }
 
