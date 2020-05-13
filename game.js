@@ -378,7 +378,7 @@ function mine(x, y)
 
 function sell(res, val)
 {
-	if (resources[res].qty > 0) {
+	if (resources[res].qty + resources[res].buffer > 0) {
 		get_money(val * resources[res].value);
 		getResource(resources[res], -1*val);
 	}
