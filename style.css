@@ -76,11 +76,16 @@ h1
 .mine-cell
 {
 	display: inline-block;
+	max-width: 80vw;
+}
+
+.mine-cell progress
+{
+	max-width: 20vw;
 }
 
 .cell-progress
 {
-	width: 75px;
 }
 
 /* --- RESOURCES AREA ---*/
