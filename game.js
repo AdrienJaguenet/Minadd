@@ -143,6 +143,7 @@ function Resource(name, value)
 	elm.appendChild(img);
 	elm.appendChild(div);
 	elm.appendChild(sell_button);
+	elm.appendChild(document.createElement("br"));
 	elm.appendChild(sellall_button);
 	document.getElementById("resources-area").appendChild(elm);
 }
