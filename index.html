@@ -13,20 +13,31 @@
 	</head>
 	<body onload="startup();">
 		<h1>Minadd</h1>
-		<div id="game-container">
-			<div id="money-label-particles">
-				<p><span id="money-label"></span>&nbsp;coins</p>
+		<div id="money-label-particles">
+			<p><span id="money-label"></span>&nbsp;coins</p>
+		</div>
+		<div id="resources-area" class="scrollmenu">
+		</div>
+
+		<div class="tab-container">
+			<div id="mining-tab" class="tab enabled" onclick="switch_tab('mining');">
+				Mining
 			</div>
-			<div id="resources-area" class="area scrollmenu">
+			<div id="upgrades-tab" class="tab disabled" onclick="switch_tab('upgrades');">
+				Upgrades
 			</div>
+		</div>
+
+		<div id="mining" class="tab-content enabled">
 			<div id="grid" class="area">
 				<div id="particles-area"></div>
 			</div>
-			<div id="upgrade-area" class="area">
-				<p>Multiplier: x<span id="multiplier-label"><span></p>
-				<button onclick="upgrade_multiplier();">Upgrade multiplier</button>
-			</div>
 		</div>
+		<div id="upgrades" class="tab-content disabled">
+			<p>Multiplier: x<span id="multiplier-label"><span></p>
+			<button onclick="upgrade_multiplier();">Upgrade multiplier</button>
+		</div>
+
 	</body>
 </html>
 

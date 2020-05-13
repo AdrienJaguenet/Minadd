@@ -59,10 +59,10 @@ function makeSellAll(res)
 function createGrid()
 {
 	
-	grid = Array.from(Array(4), () => new Array(4));
+	grid = Array.from(Array(3), () => new Array(3));
 	var grid_elm = document.getElementById("grid");
-	for (var i = 0; i < 4; ++i) {
-		for (var j = 0; j < 4; ++j) {
+	for (var i = 0; i < 3; ++i) {
+		for (var j = 0; j < 3; ++j) {
 			grid[i][j] = new Cell();
 
 			var cell_div = document.createElement("div");
@@ -93,8 +93,8 @@ function createGrid()
 
 function updateGrid()
 {
-	for (var i = 0; i < 4; ++i) {
-		for (var j = 0; j < 4; ++j) {
+	for (var i = 0; i < 3; ++i) {
+		for (var j = 0; j < 3; ++j) {
 			var cell = grid[i][j];
 			var bar = document.getElementById("progress-"+i+"-"+j);
 			bar.value = cell.health;
@@ -388,5 +388,30 @@ function upgrade_multiplier()
 {
 	mine_multiplier *= 1.1;
 	upgrade_bell.play();
+}
+
+function switch_tab(tab_name)
+{
+	var tab_contents = document.getElementsByClassName("tab-content");
+	Array.from(tab_contents).forEach( (tab) => {
+		if (tab.id == tab_name) {
+			tab.classList.add("enabled");
+			tab.classList.remove("disabled");
+		} else {
+			tab.classList.remove("enabled");
+			tab.classList.add("disabled");
+		}
+	});
+
+	var tabs = document.getElementsByClassName("tab");
+	Array.from(tabs).forEach( (tab) => {
+		if (tab.id == tab_name + "-tab") {
+			tab.classList.add("enabled");
+			tab.classList.remove("disabled");
+		} else {
+			tab.classList.remove("enabled");
+			tab.classList.add("disabled");
+		}
+	});
 }
 
