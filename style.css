@@ -73,15 +73,19 @@ h1
 
 
 /* --- GRID --- */
+#grid
+{
+	width: 100%;
+}
+
 .mine-cell
 {
 	display: inline-block;
-	max-width: 80vw;
 }
 
 .mine-cell progress
 {
-	max-width: 20vw;
+	width: 10vh;
 }
 
 .cell-progress
