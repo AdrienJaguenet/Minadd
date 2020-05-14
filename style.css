@@ -8,21 +8,18 @@ body
 {
 	user-select: none;
 	-moz-user-select: none;
-	background-color: #303030;
+	background-color: #F0F0C9;
 	color: white;
 	height: 0;
 	overflow: hidden;
 	font-smooth: never;
 	touch-action: manipulation;
+	margin: 0;
 }
 
-.tab-content
+html, body
 {
-	justify-content: space-between;
-	flex-flow: row wrap;
-	align-items: flex-start;
-	align-content: flex-start;
-	position: relative;
+	height: 100vh;
 }
 
 .area
@@ -38,9 +35,9 @@ body, button
 
 button
 {
-	background-color: black;
-	border: 3px white solid;
+	background-color: #F0A202;
 	color: white;
+	inset: 3px;
 }
 
 button:active
@@ -53,6 +50,8 @@ h1
 	text-align: center;
 	font-size: 64px;
 	margin: 0;
+	background-color: #474448;
+	width: 100%;
 }
 
 .particle
@@ -94,6 +93,12 @@ h1
 
 /* --- RESOURCES AREA ---*/
 
+#money-label-particles
+{
+	color: black;
+	padding: 0 1em;
+}
+
 #resources-area
 {
 	margin: 1em 0;
@@ -123,7 +128,7 @@ h1
 {
 	display: inline-block;
 	margin: 0 1em;
-	background: black;
+	background: #474448;
 	border: solid white 1px;
 	padding: 0.3em;
 }
@@ -148,35 +153,39 @@ h1
 
 .tab-container
 {
-	display: flex;
-	justify-content: flex-start;
+	display: table;
+	border-collapse: collapse;
 }
 
 .tab
 {
-	display: inline-block;
+	display: table-cell;
 	vertical-align: top;
-	border-top: solid 3px white;
-	border-left: solid 3px white;
-	border-right: solid 3px white;
-	margin-right: 1em;
-	padding: 0.5em 1em;
+	border-top: solid 3px #4B1000;
+	border-left: solid 3px #4B1000;
+	border-right: solid 3px #4B1000;
+	padding: 0.5rem 1rem;
+	float: left;
 }
 
 .tab-content
 {
-	border: solid 3px white;
+	border-top: solid 3px #4B1000;
 	text-align: center;
 	padding: 3em;
+	background-color: #9C7325;
+	height: 100%;
 }
+
 
 .tab.enabled
 {
+	background-color: #9C7325;
 }
 
 .tab.disabled
 {
-	background-color: black;
+	background-color: #633A13;
 }
 
 .tab-content.disabled
